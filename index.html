@@ -13,10 +13,32 @@
             font-size: 0.9375rem; 
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
             -webkit-tap-highlight-color: transparent;
-            touch-action: pan-y; /* 垂直スクロールを許可し、水平方向はJSで制御しやすくする */
+            touch-action: pan-y;
             overflow-x: hidden;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
         }
         
+        /* 左右2列レイアウトの確実な維持 */
+        .ipad-split-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
+            gap: 14px;
+            align-items: start;
+            width: 100%;
+        }
+        .calc-column, .table-column {
+            min-width: 0;
+        }
+        .table-column {
+            position: sticky;
+            top: 10px;
+        }
+        .table-card {
+            max-height: calc(100vh - 70px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+            overflow-y: auto;
+        }
+
         /* 一体型コンテナ */
         .unified-input-unit {
             background: #1c1c1e;
@@ -35,12 +57,13 @@
             border-bottom: 1px solid #333;
             border-right: 1px solid #333;
             padding: 4px 10px;
-            height: 58px;
+            height: 56px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             position: relative;
             background: #000;
+            cursor: pointer;
         }
         .input-cell:nth-child(2n) {
             border-right: none;
@@ -65,38 +88,66 @@
             line-height: 1.1;
         }
 
-        /* テンキーセクション */
-        .keypad-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            background: #333;
+        /* テンキー（ご指定の2行構成） */
+        .keypad-container {
+            display: flex;
+            flex-direction: column;
             gap: 1px;
+            background: #333;
+        }
+        .keypad-row {
+            display: grid;
+            gap: 1px;
+            background: #333;
+        }
+        .row-top {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .row-bottom {
+            grid-template-columns: repeat(11, 1fr);
         }
         .key-btn {
             background: #1c1c1e;
-            height: 68px;
+            color: #ffffff;
+            height: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.6rem;
+            font-size: 1.15rem;
             font-weight: 500;
-            transition: background 0.1s;
+            transition: background 0.1s, transform 0.05s;
+            border: none;
+            outline: none;
+            padding: 0;
+            cursor: pointer;
         }
-        .key-btn:active { background: #3a3a3c; }
-        .key-btn.gray { background: #2c2c2e; color: #d1d1d6; }
-        
-        .key-btn.orange { 
-            background: #ff9f0a; 
-            color: #fff; 
-            grid-row: span 2; 
-            height: 137px; 
-            font-weight: 800;
+        .key-btn:active {
+            background: #333336;
+            transform: scale(0.98);
         }
-        .key-btn.orange:active { background: #e68e09; }
-        
-        .key-btn.triple-zero {
-            font-size: 1.3rem;
-            font-weight: 700;
+        .key-fn {
+            height: 46px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .key-fn.clear-btn {
+            background: #262628;
+            color: #d1d1d6;
+        }
+        .key-fn.clear-btn:active {
+            background: #363638;
+        }
+        .key-fn.enter-btn {
+            background: #2c2217;
+            color: #ff9f0a;
+            border: 1px solid rgba(255, 159, 10, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .key-fn.enter-btn:active {
+            background: #3d2e1c;
         }
 
         .result-label {
@@ -117,7 +168,6 @@
             position: relative;
         }
         canvas { width: 100%; height: 100%; display: block; }
-
         
         .result-table th {
             border: 0.5px solid #333; 
@@ -130,234 +180,191 @@
             border: 0.5px solid #333; 
             text-align: center; 
             padding: 12px 2px !important;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
         }
 
-        .ipad-split-layout {
-            display: block;
+        #shareBtn {
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            background: #0a84ff;
+            color: #fff;
+            padding: 8px 14px;
+            font-size: 15px;
+            font-weight: 800;
+            line-height: 1;
+            min-height: 34px;
+            box-shadow: 0 6px 14px rgba(10,132,255,.20);
+            cursor: pointer;
         }
-        .calc-column, .table-column {
-            min-width: 0;
+        #shareBtn:active { transform: scale(.99); background: #0974dd; }
+        
+        #toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(59, 130, 246, 0.95);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            opacity: 0;
+            z-index: 10000;
+            transition: 0.3s;
+            pointer-events: none;
         }
-        .table-column {
-            margin-top: 12px;
+        #toast.show { opacity: 1; }
+
+        #installBtn {
+            position: fixed;
+            right: 16px;
+            bottom: calc(16px + env(safe-area-inset-bottom));
+            z-index: 9999;
+            border: none;
+            border-radius: 14px;
+            background: #2563eb;
+            color: #fff;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 10px 24px rgba(0,0,0,.35);
+            display: none;
         }
-        @media (min-width: 1024px) and (orientation: landscape) {
-            #app-container {
-                max-width: 1366px;
-            }
-            .ipad-split-layout {
-                display: grid;
-                grid-template-columns: minmax(0, 1.1fr) minmax(420px, 0.9fr);
-                gap: 14px;
-                align-items: start;
-            }
-            .table-column {
-                margin-top: 0;
-                position: sticky;
-                top: 12px;
-            }
-            .table-card {
-                max-height: calc(100vh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-                overflow: auto;
-            }
-            .table-column .result-table td {
-                font-size: 1.22rem;
-                padding: 13px 3px !important;
-            }
-            .table-column .result-table th {
-                font-size: 16px;
-                padding: 11px 3px !important;
-            }
-            .table-column #table-summary {
-                font-size: 1.35rem;
-            }
-            .table-column h2 {
-                font-size: 1.05rem;
-            }
-        }
+        #installBtn:active { transform: scale(.98); }
     </style>
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#000000">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="勾配 寸法計算">
-<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
-<link rel="apple-touch-startup-image" href="splash-1170x2532.png">
-<meta name="format-detection" content="telephone=no">
-<style>
-#shareBtn{
-  width:100%;
-  border:none;
-  border-radius:10px;
-  background:#0a84ff;
-  color:#fff;
-  padding:8px 14px;
-  font-size:15px;
-  font-weight:800;
-  line-height:1;
-  min-height:34px;
-  box-shadow:0 6px 14px rgba(10,132,255,.20);
-}
-#shareBtn:active{transform:scale(.99); background:#0974dd;}
-#installBtn{
-  position:fixed;
-  right:16px;
-  bottom:calc(16px + env(safe-area-inset-bottom));
-  z-index:9999;
-  border:none;
-  border-radius:14px;
-  background:#2563eb;
-  color:#fff;
-  padding:12px 16px;
-  font-size:14px;
-  font-weight:700;
-  box-shadow:0 10px 24px rgba(0,0,0,.35);
-  display:none;
-}
-#installBtn:active{transform:scale(.98)}
-body{
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-}
-</style>
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
-}
-</script>
-
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="勾配 寸法計算">
+    <link rel="icon" type="image/png" href="./icon-192.png">
+    <link rel="apple-touch-icon" href="./icon-180.png">
 </head>
 <body class="p-3 relative">
-    <div id="app-container" class="mx-auto min-h-screen pb-4">
-        <header class="flex items-baseline justify-between py-1 px-1 mb-1 gap-2">
+    <div id="toast">コピーしました</div>
+
+    <div id="app-container" class="mx-auto min-h-screen pb-4 max-w-[1400px]">
+        <header class="flex items-baseline justify-between py-1 px-1 mb-2 gap-2">
             <h1 class="text-[20px] font-bold text-white tracking-tight">勾配 寸法計算</h1>
-            <div class="header-right">
+            <div class="flex items-center gap-3">
                 <button id="shareBtn" type="button" onclick="shareAllData()">共有</button>
-                <p class="header-brand">KYOWA ROOF</p>
+                <p class="text-xs text-gray-400 font-semibold whitespace-nowrap">KYOWA ROOF</p>
             </div>
         </header>
 
+        <!-- 左右2列レイアウト（固定保持） -->
         <div class="ipad-split-layout">
+            <!-- 左列：入力・テンキー・計算結果・図面 -->
             <div class="calc-column">
+                <div class="unified-input-unit mb-3">
+                    <div class="input-grid">
+                        <div id="cell-L1" class="input-cell active" onclick="setActiveCell('L1')">
+                            <span class="cell-label text-[#30d158]">基準側 L1</span>
+                            <span id="val-L1" class="cell-value text-[#30d158]">0</span>
+                        </div>
+                        <div id="cell-L2" class="input-cell" onclick="setActiveCell('L2')">
+                            <span class="cell-label text-[#30d158]">延長側 L2</span>
+                            <span id="val-L2" class="cell-value text-[#30d158]">0</span>
+                        </div>
+                        <div id="cell-W" class="input-cell" onclick="setActiveCell('W')">
+                            <span class="cell-label text-[#0a84ff]">全体の幅 W</span>
+                            <span id="val-W" class="cell-value text-[#0a84ff]">0</span>
+                        </div>
+                        <div id="cell-Pitch" class="input-cell" onclick="setActiveCell('Pitch')">
+                            <span class="cell-label text-[#bf5af2]">働き幅 ＠</span>
+                            <span id="val-Pitch" class="cell-value text-[#bf5af2]">0</span>
+                        </div>
+                    </div>
 
-            <div class="unified-input-unit mb-3">
-                <div class="input-grid">
-                    <div id="cell-L1" class="input-cell active" onclick="setActiveCell('L1')">
-                        <span class="cell-label text-[#30d158]">基準側 L1</span>
-                        <span id="val-L1" class="cell-value text-[#30d158]">0</span>
-                    </div>
-                    <div id="cell-L2" class="input-cell" onclick="setActiveCell('L2')">
-                        <span class="cell-label text-[#30d158]">延長側 L2</span>
-                        <span id="val-L2" class="cell-value text-[#30d158]">0</span>
-                    </div>
-                    <div id="cell-W" class="input-cell" onclick="setActiveCell('W')">
-                        <span class="cell-label text-[#0a84ff]">全体の幅 W</span>
-                        <span id="val-W" class="cell-value text-[#0a84ff]">0</span>
-                    </div>
-                    <div id="cell-Pitch" class="input-cell" onclick="setActiveCell('Pitch')">
-                        <span class="cell-label text-[#bf5af2]">働き幅 ＠</span>
-                        <span id="val-Pitch" class="cell-value text-[#bf5af2]">0</span>
+                    <!-- テンキー（2行構成: 上段3キー均等幅 / 下段11キー） -->
+                    <div class="keypad-container">
+                        <div class="keypad-row row-top">
+                            <button type="button" class="key-btn key-fn clear-btn" onclick="pressKey('C')">C</button>
+                            <button type="button" class="key-btn key-fn clear-btn" onclick="pressKey('AC')">AC</button>
+                            <button type="button" class="key-btn key-fn enter-btn" onclick="pressKey('enter')">
+                                <span>エンター</span>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 10 4 15 9 20"></polyline><path d="M20 4v7a4 4 0 0 1-4 4H4"></path></svg>
+                            </button>
+                        </div>
+                        <div class="keypad-row row-bottom">
+                            <button type="button" class="key-btn" onclick="pressKey('1')">1</button>
+                            <button type="button" class="key-btn" onclick="pressKey('2')">2</button>
+                            <button type="button" class="key-btn" onclick="pressKey('3')">3</button>
+                            <button type="button" class="key-btn" onclick="pressKey('4')">4</button>
+                            <button type="button" class="key-btn" onclick="pressKey('5')">5</button>
+                            <button type="button" class="key-btn" onclick="pressKey('6')">6</button>
+                            <button type="button" class="key-btn" onclick="pressKey('7')">7</button>
+                            <button type="button" class="key-btn" onclick="pressKey('8')">8</button>
+                            <button type="button" class="key-btn" onclick="pressKey('9')">9</button>
+                            <button type="button" class="key-btn" onclick="pressKey('0')">0</button>
+                            <button type="button" class="key-btn" onclick="pressKey('00')">00</button>
+                        </div>
                     </div>
                 </div>
 
-                <div class="keypad-grid">
-                    <div class="key-btn" onclick="pressKey('7')">7</div>
-                    <div class="key-btn" onclick="pressKey('8')">8</div>
-                    <div class="key-btn" onclick="pressKey('9')">9</div>
-                    <div class="key-btn gray" onclick="pressKey('C')">C</div>
-                    
-                    <div class="key-btn" onclick="pressKey('4')">4</div>
-                    <div class="key-btn" onclick="pressKey('5')">5</div>
-                    <div class="key-btn" onclick="pressKey('6')">6</div>
-                    <div class="key-btn gray" onclick="pressKey('AC')">AC</div>
-                    
-                    <div class="key-btn" onclick="pressKey('1')">1</div>
-                    <div class="key-btn" onclick="pressKey('2')">2</div>
-                    <div class="key-btn" onclick="pressKey('3')">3</div>
-                    <div class="key-btn orange" onclick="pressKey('enter')">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 10 4 15 9 20"></polyline><path d="M20 4v7a4 4 0 0 1-4 4H4"></path></svg>
+                <div class="bg-[#1c1c1e] rounded-[14px] p-3 border border-[#333]">
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <div class="bg-black border border-[#333] p-1.5 rounded-lg text-center">
+                            <span class="block result-label text-[#0a84ff]">延長後の幅</span>
+                            <span id="resNewB" class="result-value text-white">-</span>
+                        </div>
+                        <div class="bg-black border border-[#333] p-1.5 rounded-lg text-center">
+                            <span class="block result-label text-[#30d158]">延長後のL2</span>
+                            <span id="resNewC" class="result-value text-white">-</span>
+                        </div>
+                        <div class="bg-black border border-[#333] p-1.5 rounded-lg text-center">
+                            <span class="block result-label text-[#ff9f0a]">総枚数</span>
+                            <span id="resIntervalCount" class="result-value text-white">-</span>
+                        </div>
+                        <div class="bg-black border border-[#333] p-1.5 rounded-lg text-center">
+                            <span class="block result-label text-[#bf5af2]">増分</span>
+                            <span id="resStep" class="result-value text-white">-</span>
+                        </div>
                     </div>
-                    
-                    <div class="key-btn" onclick="pressKey('0')">0</div>
-                    <div class="key-btn" onclick="pressKey('00')">00</div>
-                    <div class="key-btn triple-zero" onclick="pressKey('000')">000</div>
-                </div>
-            </div>
 
-            <div class="bg-[#1c1c1e] rounded-[14px] p-3 border border-[#333]">
-                <div class="grid grid-cols-2 gap-2 mb-3">
-                    <div class="bg-black border border-[#333] p-1.5 rounded-lg text-center">
-                        <span class="block result-label text-[#0a84ff]">延長後の幅</span>
-                        <span id="resNewB" class="result-value text-white">-</span>
+                    <div class="canvas-container border border-[#333] rounded-lg cursor-pointer" onclick="openZoomModal()">
+                        <canvas id="slopeCanvas"></canvas>
                     </div>
-                    <div class="bg-black border border-[#333] p-1.5 rounded-lg text-center">
-                        <span class="block result-label text-[#30d158]">延長後のL2</span>
-                        <span id="resNewC" class="result-value text-white">-</span>
-                    </div>
-                    <div class="bg-black border border-[#333] p-1.5 rounded-lg text-center">
-                        <span class="block result-label text-[#ff9f0a]">総枚数</span>
-                        <span id="resIntervalCount" class="result-value text-white">-</span>
-                    </div>
-                    <div class="bg-black border border-[#333] p-1.5 rounded-lg text-center">
-                        <span class="block result-label text-[#bf5af2]">増分</span>
-                        <span id="resStep" class="result-value text-white">-</span>
-                    </div>
-                </div>
-
-                
-                <div class="canvas-container border border-[#333] rounded-lg cursor-pointer" onclick="openZoomModal()">
-                    <!-- 拡大バッジ (非表示) -->
-                    <div class="hidden absolute top-2 right-2 bg-black/70 text-white text-[10px] font-bold px-2 py-1 rounded flex items-center gap-1 backdrop-blur-sm border border-white/20 z-10 pointer-events-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
-                        拡大
-                    </div>
-                    <canvas id="slopeCanvas"></canvas>
                 </div>
             </div>
-            </div>
+
+            <!-- 右列：寸法詳細テーブル -->
             <div class="table-column">
                 <div class="bg-[#1c1c1e] rounded-[14px] p-3 border border-[#333] table-card">
-                <div class="flex justify-between items-center mb-2">
-                    <h2 class="font-bold text-gray-200">寸法詳細</h2>
-                    <span id="table-summary" class="text-lg text-[#ff9f0a] font-bold"></span>
+                    <div class="flex justify-between items-center mb-2">
+                        <h2 class="font-bold text-gray-200">寸法詳細</h2>
+                        <span id="table-summary" class="text-lg text-[#ff9f0a] font-bold"></span>
+                    </div>
+                    <table class="result-table w-full border-collapse bg-black text-sm">
+                        <thead>
+                            <tr>
+                                <th class="w-[20%] text-[#ff9f0a] bg-[#1c1c1e] py-2" style="border-bottom: 1px solid #d1d1d6;">No.</th>
+                                <th class="w-[40%] text-[#0a84ff] bg-[#1c1c1e] py-2" style="border-bottom: 1px solid #d1d1d6;">働き幅</th>
+                                <th class="w-[40%] text-[#30d158] bg-[#1c1c1e] py-2" style="border-bottom: 1px solid #d1d1d6;">長さ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultBody"></tbody>
+                    </table>
                 </div>
-                <table class="result-table w-full border-collapse bg-black text-sm">
-                    <thead>
-                        <tr>
-                            <th class="w-[20%] text-[#ff9f0a] bg-[#1c1c1e] py-2" style="border-bottom: 1px solid #d1d1d6;">No.</th>
-                            <th class="w-[40%] text-[#0a84ff] bg-[#1c1c1e] py-2" style="border-bottom: 1px solid #d1d1d6;">働き幅</th>
-                            <th class="w-[40%] text-[#30d158] bg-[#1c1c1e] py-2" style="border-bottom: 1px solid #d1d1d6;">長さ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="resultBody"></tbody>
-                </table>
-            </div>
             </div>
         </div>
-
     </div>
 
-    <!-- 拡大・ピンチ・回転対応ズームモーダル -->
+    <!-- 拡大モーダル -->
     <div id="zoomModal" class="hidden fixed inset-0 z-[10000] flex flex-col bg-black transition-opacity">
-        <!-- ヘッダー部分 (操作ガイドを削除) -->
         <div class="absolute top-0 left-0 right-0 p-4 md:p-6 flex justify-end items-center z-[10010]">
             <div class="flex gap-3">
-                <!-- 回転ボタン -->
                 <button type="button" class="text-white bg-white/20 hover:bg-white/30 rounded-full p-2.5 backdrop-blur-md transition-colors" onclick="toggleZoomRotation()">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                 </button>
-                <!-- 閉じるボタン -->
                 <button type="button" class="text-white bg-white/20 hover:bg-white/30 rounded-full p-2.5 backdrop-blur-md transition-colors" onclick="closeZoomModal()">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
             </div>
         </div>
-        <!-- 拡大画像コンテナ (touch-noneでスクロールを防止) -->
         <div id="zoomArea" class="flex-1 w-full h-full flex items-center justify-center overflow-hidden touch-none relative">
             <img id="zoomImg" class="max-w-full max-h-full object-contain transition-transform duration-75 ease-out" alt="拡大図面" style="transform-origin: center;">
         </div>
@@ -369,7 +376,15 @@ if ('serviceWorker' in navigator) {
         let isFirstInput = true;
         const sequence = ['L1', 'L2', 'W', 'Pitch'];
 
-        // ---------- 入力・計算系 ----------
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            if (t) {
+                t.innerText = msg;
+                t.classList.add('show');
+                setTimeout(() => t.classList.remove('show'), 1200);
+            }
+        }
+
         function setActiveCell(key) {
             activeKey = key;
             isFirstInput = true; 
@@ -386,6 +401,7 @@ if ('serviceWorker' in navigator) {
             if (key === 'AC') {
                 values = { L1: '0', L2: '0', W: '0', Pitch: '0' };
                 isFirstInput = true;
+                showToast("全クリアしました");
             } else if (key === 'C') {
                 values[activeKey] = '0';
                 isFirstInput = true;
@@ -412,6 +428,55 @@ if ('serviceWorker' in navigator) {
             saveState();
         }
 
+        function handleBackspace() {
+            let cur = values[activeKey];
+            if (cur && cur.length > 1) {
+                values[activeKey] = cur.slice(0, -1);
+            } else {
+                values[activeKey] = '0';
+                isFirstInput = true;
+            }
+            updateDisplay();
+            calculate();
+            saveState();
+        }
+
+        window.addEventListener('keydown', (e) => {
+            // モーダル表示中はEscapeで閉じる
+            const zoomModal = document.getElementById('zoomModal');
+            if (zoomModal && !zoomModal.classList.contains('hidden')) {
+                if (e.key === 'Escape') closeZoomModal();
+                return;
+            }
+
+            // テンキーおよびメインキーボードの数字 (0〜9)
+            if (e.key >= '0' && e.key <= '9') {
+                e.preventDefault();
+                pressKey(e.key);
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                pressKey('enter');
+            } else if (e.key === 'Backspace') {
+                e.preventDefault();
+                handleBackspace();
+            } else if (e.key === 'Escape' || e.key === 'Delete') {
+                e.preventDefault();
+                pressKey('C');
+            } else if (e.key === 'c' || e.key === 'C') {
+                if (!e.ctrlKey && !e.metaKey) {
+                    e.preventDefault();
+                    pressKey('C');
+                }
+            } else if (e.key === 'Tab') {
+                e.preventDefault();
+                const idx = sequence.indexOf(activeKey);
+                const nextIdx = e.shiftKey
+                    ? (idx - 1 + sequence.length) % sequence.length
+                    : (idx + 1) % sequence.length;
+                setActiveCell(sequence[nextIdx]);
+            }
+        });
+
         function updateDisplay() {
             sequence.forEach(k => {
                 const val = values[k];
@@ -420,7 +485,6 @@ if ('serviceWorker' in navigator) {
                 if(display) display.innerText = isNaN(num) ? val : num.toLocaleString('en-US', {maximumFractionDigits: 4});
             });
         }
-
 
         function calculate() {
             const a = parseFloat(values.L1) || 0;
@@ -436,7 +500,7 @@ if ('serviceWorker' in navigator) {
                 const tbody = document.getElementById('resultBody');
                 if(tbody) tbody.innerHTML = '';
                 return;
-            };
+            }
 
             const count = Math.ceil(b / interval);
             const newB = count * interval;
@@ -642,14 +706,19 @@ if ('serviceWorker' in navigator) {
             }
 
             try {
-                await navigator.clipboard.writeText(shareText);
-                alert('共有に対応していないため、全文をコピーしました。貼り付けて送ってください。');
+                const dummy = document.createElement('textarea');
+                dummy.value = shareText;
+                document.body.appendChild(dummy);
+                dummy.select();
+                document.execCommand('copy');
+                document.body.removeChild(dummy);
+                showToast('寸法データをコピーしました');
             } catch (error) {
-                alert(shareText);
+                showToast('コピーに失敗しました');
             }
         }
 
-        // ---------- ズーム・回転・ピンチ機能 ----------
+        // ズームモーダル
         let zoomState = { scale: 1, x: 0, y: 0, rotation: 0 };
         let pinchState = { isDragging: false, startX: 0, startY: 0, initialDist: 0, initialScale: 1 };
 
@@ -660,7 +729,6 @@ if ('serviceWorker' in navigator) {
             const zoomImg = document.getElementById('zoomImg');
             zoomImg.src = canvas.toDataURL('image/png');
             
-            // 状態を初期化
             zoomState = { scale: 1, x: 0, y: 0, rotation: 0 };
             updateZoomTransform();
 
@@ -678,19 +746,13 @@ if ('serviceWorker' in navigator) {
         function toggleZoomRotation() {
             const zoomImg = document.getElementById('zoomImg');
             zoomState.rotation = (zoomState.rotation === 0) ? 90 : 0;
-            
-            // 位置のリセット
             zoomState.x = 0;
             zoomState.y = 0;
             
-            // 回転時に画面いっぱいに表示されるようスケールを自動計算
             if (zoomState.rotation === 90) {
                 const vW = window.innerWidth;
                 const vH = window.innerHeight;
-                // imgタグの表示領域を取得
                 const rect = zoomImg.getBoundingClientRect();
-                // 90度回転時は、元の幅が高さになり、元の高さが幅になる
-                // 安全のため画面の95%程度に収まるスケールを算出
                 const scaleW = (vW * 0.95) / rect.height;
                 const scaleH = (vH * 0.95) / rect.width;
                 zoomState.scale = Math.min(scaleW, scaleH);
@@ -708,58 +770,6 @@ if ('serviceWorker' in navigator) {
             zoomImg.style.transform = `translate(${zoomState.x}px, ${zoomState.y}px) scale(${zoomState.scale}) rotate(${zoomState.rotation}deg)`;
         }
 
-        // DOMContentLoaded後にズームエリアのタッチイベントを登録
-        window.addEventListener('DOMContentLoaded', () => {
-            const zoomArea = document.getElementById('zoomArea');
-            if (!zoomArea) return;
-
-            zoomArea.addEventListener('touchstart', (e) => {
-                if (e.touches.length === 1) {
-                    pinchState.isDragging = true;
-                    pinchState.startX = e.touches[0].clientX - zoomState.x;
-                    pinchState.startY = e.touches[0].clientY - zoomState.y;
-                } else if (e.touches.length === 2) {
-                    pinchState.isDragging = false;
-                    pinchState.initialDist = Math.hypot(
-                        e.touches[0].clientX - e.touches[1].clientX,
-                        e.touches[0].clientY - e.touches[1].clientY
-                    );
-                    pinchState.initialScale = zoomState.scale;
-                }
-            }, { passive: false });
-
-            zoomArea.addEventListener('touchmove', (e) => {
-                e.preventDefault(); // デフォルトのスクロール動作を防止
-                if (e.touches.length === 1 && pinchState.isDragging) {
-                    zoomState.x = e.touches[0].clientX - pinchState.startX;
-                    zoomState.y = e.touches[0].clientY - pinchState.startY;
-                    updateZoomTransform();
-                } else if (e.touches.length === 2) {
-                    const dist = Math.hypot(
-                        e.touches[0].clientX - e.touches[1].clientX,
-                        e.touches[0].clientY - e.touches[1].clientY
-                    );
-                    const scale = pinchState.initialScale * (dist / pinchState.initialDist);
-                    // 0.3倍から10倍の間に制限
-                    zoomState.scale = Math.max(0.3, Math.min(scale, 10));
-                    updateZoomTransform();
-                }
-            }, { passive: false });
-
-            zoomArea.addEventListener('touchend', (e) => {
-                if (e.touches.length < 2) {
-                    pinchState.initialDist = 0;
-                }
-                if (e.touches.length === 0) {
-                    pinchState.isDragging = false;
-                } else if (e.touches.length === 1) {
-                    // 指が1本離れたら再びドラッグ状態の準備
-                    pinchState.isDragging = true;
-                    pinchState.startX = e.touches[0].clientX - zoomState.x;
-                    pinchState.startY = e.touches[0].clientY - zoomState.y;
-                }
-            });
-        });
         window.onload = () => {
             const saved = JSON.parse(localStorage.getItem('slope_calc_v_keypad'));
             if(saved) {
@@ -767,37 +777,19 @@ if ('serviceWorker' in navigator) {
                 updateDisplay();
                 calculate();
             }
-
             window.addEventListener('resize', calculate);
         };
     </script>
-
-<button id="installBtn" aria-label="このアプリをインストール">アプリをインストール</button>
-<script>
-(function() {
-  let deferredPrompt = null;
-  const btn = document.getElementById('installBtn');
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
-  window.addEventListener('beforeinstallprompt', function(e) {
-    e.preventDefault();
-    deferredPrompt = e;
-    if (!isStandalone) btn.style.display = 'block';
-  });
-
-  btn.addEventListener('click', async function() {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    try { await deferredPrompt.userChoice; } catch (e) {}
-    deferredPrompt = null;
-    btn.style.display = 'none';
-  });
-
-  window.addEventListener('appinstalled', function() {
-    btn.style.display = 'none';
-  });
-})();
-</script>
-
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').then((registration) => {
+                    console.log('ServiceWorker registration successful:', registration.scope);
+                }).catch((err) => {
+                    console.error('ServiceWorker registration failed:', err);
+                });
+            });
+        }
+    </script>
 </body>
 </html>

@@ -1,17 +1,15 @@
-const CACHE_NAME = 'slope-calc-v20260406-01';
-const APP_SHELL = [
+const CACHE_NAME = 'slope-calc-pwa-v20260929-01';
+const CORE_ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './icon-180.png',
-  './icon-192.png',
-  './icon-512.png'
+  './sw.js'
 ];
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(CORE_ASSETS))
   );
 });
 
@@ -29,49 +27,77 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-self.addEventListener('fetch', (event) => {
-  const req = event.request;
-  if (req.method !== 'GET') return;
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
 
-  const url = new URL(req.url);
-  const isSameOrigin = url.origin === self.location.origin;
-  if (!isSameOrigin) return;
+function isSameOrigin(request) {
+  return new URL(request.url).origin === self.location.origin;
+}
 
-  const isNavigation = req.mode === 'navigate';
-  const isCoreFile = (
+function isNavigationRequest(request) {
+  return request.mode === 'navigate';
+}
+
+function isCriticalAsset(request) {
+  const url = new URL(request.url);
+  return isSameOrigin(request) && (
     url.pathname.endsWith('/index.html') ||
     url.pathname.endsWith('/manifest.json') ||
-    url.pathname.endsWith('/sw.js') ||
-    url.pathname.endsWith('/icon-180.png') ||
-    url.pathname.endsWith('/icon-192.png') ||
-    url.pathname.endsWith('/icon-512.png') ||
-    url.pathname === self.location.pathname.replace(/\/sw\.js$/, '/')
+    url.pathname.endsWith('/sw.js')
   );
+}
 
-  if (isNavigation || isCoreFile) {
-    event.respondWith(
-      fetch(req)
-        .then((networkRes) => {
-          const copy = networkRes.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
-          return networkRes;
-        })
-        .catch(async () => {
-          const cached = await caches.match(req);
-          if (cached) return cached;
-          return caches.match('./index.html');
-        })
-    );
+function isStaticAsset(request) {
+  const url = new URL(request.url);
+  return isSameOrigin(request) && /\.(?:png|jpg|jpeg|webp|svg|gif|ico)$/.test(url.pathname);
+}
+
+async function networkFirst(request, fallbackPath = './index.html') {
+  const cache = await caches.open(CACHE_NAME);
+  try {
+    const response = await fetch(request, { cache: 'no-store' });
+    if (response && response.ok) {
+      cache.put(request, response.clone()).catch(() => {});
+    }
+    return response;
+  } catch (error) {
+    const cached = await cache.match(request);
+    if (cached) return cached;
+    return cache.match(fallbackPath);
+  }
+}
+
+async function cacheFirst(request) {
+  const cache = await caches.open(CACHE_NAME);
+  const cached = await cache.match(request);
+  if (cached) return cached;
+  const response = await fetch(request);
+  if (response && response.ok) {
+    cache.put(request, response.clone()).catch(() => {});
+  }
+  return response;
+}
+
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  if (request.method !== 'GET') return;
+
+  if (!isSameOrigin(request)) {
     return;
   }
 
-  event.respondWith(
-    caches.match(req).then((cached) => {
-      return cached || fetch(req).then((networkRes) => {
-        const copy = networkRes.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
-        return networkRes;
-      });
-    })
-  );
+  if (isNavigationRequest(request) || isCriticalAsset(request)) {
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
+  if (isStaticAsset(request)) {
+    event.respondWith(cacheFirst(request));
+    return;
+  }
+
+  event.respondWith(networkFirst(request));
 });

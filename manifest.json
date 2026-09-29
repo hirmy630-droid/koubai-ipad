@@ -1,12 +1,19 @@
 {
+  "id": "slope-calc-app-v1",
   "name": "勾配 寸法計算",
   "short_name": "勾配",
-  "start_url": "./",
+  "description": "勾配 寸法計算 PWA",
+  "lang": "ja",
+  "start_url": "./index.html?pwa=1",
   "scope": "./",
   "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "any",
   "background_color": "#000000",
   "theme_color": "#000000",
-  "orientation": "any",
   "icons": [
     {
       "src": "./icon-180.png",
