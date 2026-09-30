@@ -1,4 +1,4 @@
-const CACHE_NAME = 'slope-calc-pwa-v20260929-01';
+const CACHE_NAME = 'slope-calc-pwa-v20241001-01'; // Updated cache version
 const CORE_ASSETS = [
   './',
   './index.html',
