@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>勾配 寸法計算</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width:640px){.container{max-width:640px}}@media (min-width:768px){.container{max-width:768px}}@media (min-width:1024px){.container{max-width:1024px}}@media (min-width:1280px){.container{max-width:1280px}}@media (min-width:1536px){.container{max-width:1536px}}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0}.left-0{left:0}.right-0{right:0}.top-0{top:0}.z-\[10000\]{z-index:10000}.z-\[10010\]{z-index:10010}.mx-auto{margin-left:auto;margin-right:auto}.mb-2{margin-bottom:.5rem}.mt-0\.5{margin-top:.125rem}.block{display:block}.flex{display:flex}.table{display:table}.table-column{display:table-column}.grid{display:grid}.hidden{display:none}.h-6{height:1.5rem}.h-full{height:100%}.max-h-full{max-height:100%}.w-6{width:1.5rem}.w-\[20\%\]{width:20%}.w-\[40\%\]{width:40%}.w-full{width:100%}.max-w-\[1400px\]{max-width:1400px}.max-w-full{max-width:100%}.flex-1{flex:1 1 0%}.flex-shrink{flex-shrink:1}.flex-shrink-0{flex-shrink:0}.border-collapse{border-collapse:collapse}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.touch-none{touch-action:none}.resize{resize:both}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.flex-col{flex-direction:column}.items-center{align-items:center}.items-baseline{align-items:baseline}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:.25rem}.gap-2{gap:.5rem}.gap-3{gap:.75rem}.overflow-hidden{overflow:hidden}.whitespace-nowrap{white-space:nowrap}.rounded-\[14px\]{border-radius:14px}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.border{border-width:1px}.border-\[\#333\]{--tw-border-opacity:1;border-color:rgb(51 51 51/var(--tw-border-opacity,1))}.bg-\[\#1c1c1e\]{--tw-bg-opacity:1;background-color:rgb(28 28 30/var(--tw-bg-opacity,1))}.bg-\[\#2c2c2e\]{--tw-bg-opacity:1;background-color:rgb(44 44 46/var(--tw-bg-opacity,1))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0/var(--tw-bg-opacity,1))}.bg-white\/20{background-color:hsla(0,0%,100%,.2)}.object-contain{-o-object-fit:contain;object-fit:contain}.p-1\.5{padding:.375rem}.p-2\.5{padding:.625rem}.p-3{padding:.75rem}.p-4{padding:1rem}.px-1{padding-left:.25rem;padding-right:.25rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.text-center{text-align:center}.text-\[14px\]{font-size:14px}.text-\[21px\]{font-size:21px}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:.75rem;line-height:1rem}.font-black{font-weight:900}.font-bold{font-weight:700}.font-normal{font-weight:400}.font-semibold{font-weight:600}.leading-none{line-height:1}.tracking-tight{letter-spacing:-.025em}.text-\[\#0a84ff\]{--tw-text-opacity:1;color:rgb(10 132 255/var(--tw-text-opacity,1))}.text-\[\#30d158\]{--tw-text-opacity:1;color:rgb(48 209 88/var(--tw-text-opacity,1))}.text-\[\#8e8e93\]{--tw-text-opacity:1;color:rgb(142 142 147/var(--tw-text-opacity,1))}.text-\[\#bf5af2\]{--tw-text-opacity:1;color:rgb(191 90 242/var(--tw-text-opacity,1))}.text-\[\#d1d1d6\]{--tw-text-opacity:1;color:rgb(209 209 214/var(--tw-text-opacity,1))}.text-\[\#ff9f0a\]{--tw-text-opacity:1;color:rgb(255 159 10/var(--tw-text-opacity,1))}.text-gray-200{--tw-text-opacity:1;color:rgb(229 231 235/var(--tw-text-opacity,1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.outline{outline-style:solid}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.duration-75{transition-duration:75ms}.ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}.ease-out{transition-timing-function:cubic-bezier(0,0,.2,1)}.hover\:bg-white\/30:hover{background-color:hsla(0,0%,100%,.3)}@media (min-width:768px){.md\:p-6{padding:1.5rem}}
+</style>
     <style>
         /* iOS Dark Mode Theme (iPad 11-inch Optimized) */
         html, body {
@@ -316,7 +318,7 @@
                             <button type="button" class="key-btn key-fn clear-btn" onclick="pressKey('AC')">AC</button>
                             <button type="button" class="key-btn font-semibold" onclick="pressKey('00')">00</button>
                             <button type="button" class="key-btn font-semibold" onclick="pressKey('0')">0</button>
-                            <button type="button" class="key-btn key-fn enter-btn" onclick="pressKey('enter')" aria-label="Enter">
+                            <button type="button" class="key-btn key-fn enter-btn" onclick="pressKey('enter')" aria-label="作図して次の入力欄へ">
                                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="9 10 4 15 9 20"></polyline>
                                     <path d="M20 4v7a4 4 0 0 1-4 4H4"></path>
@@ -409,6 +411,7 @@
         let activeKey = 'L1';
         let values = { L1: '0', L2: '0', W: '0', Pitch: '0' };
         let isFirstInput = true;
+        let confirmedDrawing = null;
         const sequence = ['L1', 'L2', 'W', 'Pitch'];
 
         function showToast(msg) {
@@ -441,6 +444,7 @@
                 values[activeKey] = '0';
                 isFirstInput = true;
             } else if (key === 'enter') {
+                calculate(true);
                 const idx = sequence.indexOf(activeKey);
                 const nextIdx = (idx + 1) % sequence.length;
                 setActiveCell(sequence[nextIdx]);
@@ -459,6 +463,7 @@
                 }
             }
             updateDisplay();
+            clearDrawing();
             calculate();
             saveState();
         }
@@ -472,6 +477,7 @@
                 isFirstInput = true;
             }
             updateDisplay();
+            clearDrawing();
             calculate();
             saveState();
         }
@@ -519,23 +525,45 @@
             });
         }
 
-        function calculate() {
+        function clearDrawing() {
+            confirmedDrawing = null;
+            const canvas = document.getElementById('slopeCanvas');
+            if (canvas) canvas.width = 0;
+            closeZoomModal();
+        }
+
+        function calculate(draw = false) {
             const a = parseFloat(values.L1) || 0;
             const b = parseFloat(values.W) || 0;
             const c = parseFloat(values.L2) || 0;
             const interval = parseFloat(values.Pitch) || 0;
 
-            if (b <= 0 || interval <= 0) {
+            const count = Math.ceil(b / interval);
+            let error = '';
+            if (![a, b, c, interval].every(Number.isFinite) ||
+                [a, b, c, interval].some(n => n < 0)) {
+                error = '入力値を確認してください';
+            } else if (c < a) {
+                error = '最長L2は最短L1以上にしてください';
+            } else if (b > 0 && interval > 0 && (!Number.isSafeInteger(count) || count > 1000)) {
+                error = '総枚数は1000枚以内にしてください';
+            } else if (b > 0 && interval > 0 &&
+                ![count * interval, (c - a) / b, a + ((c - a) / b) * (count * interval)].every(Number.isFinite)) {
+                error = '入力値が大きすぎます';
+            }
+            if (error || b <= 0 || interval <= 0) {
                 ['resNewB', 'resNewC', 'resIntervalCount', 'resStep'].forEach(id => {
                     const el = document.getElementById(id);
-                    if(el) el.innerText = '-';
+                    if (el) el.innerText = '-';
                 });
                 const tbody = document.getElementById('resultBody');
-                if(tbody) tbody.innerHTML = '';
+                if (tbody) tbody.innerHTML = '';
+                const summary = document.getElementById('table-summary');
+                if (summary) summary.innerText = error;
+                clearDrawing();
                 return;
             }
 
-            const count = Math.ceil(b / interval);
             const newB = count * interval;
             const slope = (c - a) / b;
             const newC = a + (slope * newB);
@@ -594,7 +622,10 @@
                 `;
                 tbody.appendChild(trScrap);
             }
-            drawSlope(a, b, c, newB, newC, count, interval);
+            if (draw) {
+                confirmedDrawing = [a, b, c, newB, newC, count, interval];
+                drawSlope(...confirmedDrawing);
+            }
         }
 
         function drawSlope(a, origB, origC, newB, newC, count, interval) {
@@ -620,8 +651,8 @@
             const ty = (y) => rect.height - padding.b - y * scaleY;
 
             ctx.beginPath(); ctx.strokeStyle = '#222'; ctx.lineWidth = 1;
-            for(let j=0; j<=maxHeight; j+=maxHeight/4) {
-                if(j === 0) continue;
+            for (let grid = 1; grid <= 4; grid++) {
+                const j = maxHeight * grid / 4;
                 ctx.moveTo(tx(0), ty(j)); ctx.lineTo(tx(newB), ty(j));
             }
             ctx.stroke();
@@ -677,7 +708,11 @@
         }
 
         function saveState() {
-            localStorage.setItem('slope_calc_v_keypad', JSON.stringify(values));
+            try {
+                localStorage.setItem('slope_calc_v_keypad', JSON.stringify(values));
+            } catch (error) {
+                // 保存できない環境でも計算は継続する。
+            }
         }
 
         function formatNumberText(value) {
@@ -713,16 +748,14 @@
                 lines.push('データなし');
             } else {
                 rows.forEach((row) => {
-                    const cells = Array.from(row.querySelectorAll('td')).map(td => td.innerText.replace(/
-+/g, ' / ').replace(/\s+/g, ' ').trim());
+                    const cells = Array.from(row.querySelectorAll('td')).map(td => td.innerText.replace(/\n+/g, ' / ').replace(/\s+/g, ' ').trim());
                     if (cells.length >= 3) {
                         lines.push(`${cells[0]} | 働き幅: ${cells[1]} | 長さ: ${cells[2]}`);
                     }
                 });
             }
 
-            return lines.join('
-');
+            return lines.join('\n');
         }
 
         async function shareAllData() {
@@ -805,20 +838,30 @@
         }
 
         window.onload = () => {
-            const saved = JSON.parse(localStorage.getItem('slope_calc_v_keypad'));
-            if(saved) {
-                values = saved;
-                updateDisplay();
-                calculate();
+            try {
+                const saved = JSON.parse(localStorage.getItem('slope_calc_v_keypad'));
+                if (saved && typeof saved === 'object' && !Array.isArray(saved) &&
+                    sequence.every(k => typeof saved[k] === 'string' &&
+                        /^\d+(?:\.\d+)?$/.test(saved[k]) &&
+                        Number.isFinite(Number(saved[k])))) {
+                    values = Object.fromEntries(sequence.map(k => [k, saved[k]]));
+                }
+            } catch (error) {
+                // 破損データや保存領域の利用制限があっても起動する。
             }
-            window.addEventListener('resize', calculate);
+            updateDisplay();
+            calculate();
+            clearDrawing();
+            window.addEventListener('resize', () => {
+                if (confirmedDrawing) drawSlope(...confirmedDrawing);
+            });
         };
     </script>
     <script>
         // ServiceWorker は http/https プロトコル環境（本番サーバー環境）でのみ登録を実行し、blobやプレビュー環境でのエラーを防ぎます
         if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.protocol === 'http:')) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').then((registration) => {
+                navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then((registration) => {
                     console.log('ServiceWorker registration successful:', registration.scope);
                 }).catch((err) => {
                     console.warn('ServiceWorker registration not active in this environment:', err);
